@@ -1,0 +1,86 @@
+#!/usr/bin/csi -s
+
+(define (abc)
+    '(#\a #\b #\c #\d #\e #\f #\g #\h #\i #\j #\k #\l #\m 
+      #\n #\o #\p #\q #\r #\s #\t #\u #\v #\w #\x #\y #\z
+     )
+)
+
+(define (digs) '(#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9))
+
+(define (operations) '(#\+ #\- #\* #\/ #\%))
+
+(define (zip l1 l2)
+    (cond ((null? l1) '())
+          ((null? l2) '())
+          (else (cons (list (car l1) (car l2)) (zip (cdr l1) (cdr l2))))
+    )
+)
+
+(define (look4 x xs)
+    (cond ((null? xs) (print "ERROR: BAD PARAMETERS") "0")
+          ((equal? x (caar xs)) (cadar xs))
+          (else (look4 x (cdr xs)))
+    )
+)
+
+(define (digs2num l l1)
+    (cond ((null? l) '())
+          ((member (car l) (digs)) (digs2num (cdr l) (cons (car l) l1)))
+          (else (cons (string->number (list->string (reverse l1))) l))     
+    )
+)
+
+(define (lst2expr l args)
+    (cond ((null? l) '())
+          ((member (car l) (abc)) 
+              (lst2expr (cons (string->number (look4 (car l) args)) (cdr l)) args)
+          )
+          ((member (car l) (digs))
+             (lst2expr (digs2num l '()) args)
+          )
+          ((equal? (car l) #\ ) (lst2expr (cdr l) args))
+          (else (cons (car l) (lst2expr (cdr l) args)))
+    )
+)
+
+(define (numberps l)
+    (cond ((null? l) #t)
+          ((number? (car l)) (numberps (cdr l)))
+          (else #f)
+    )
+)
+
+(define (calculate l)
+    (cond ((null? l) '())
+          ((= (length l) 1) l)
+          ((= (length l) 2) l)
+          ((and (equal? (car l) #\+) (number? (cadr l)) (number? (caddr l)))
+              (calculate (cons (+ (cadr l) (caddr l)) (calculate (cdddr l)))))
+          ((and (equal? (car l) #\-) (number? (cadr l)) (number? (caddr l)))
+              (calculate (cons (- (cadr l) (caddr l)) (calculate (cdddr l)))))
+          ((and (equal? (car l) #\*) (number? (cadr l)) (number? (caddr l)))
+              (calculate (cons (* (cadr l) (caddr l)) (calculate (cdddr l)))))
+          ((and (equal? (car l) #\/) (number? (cadr l)) (number? (caddr l)))
+              (calculate (cons (floor (cadr l) (caddr l)) (calculate (cdddr l)))))
+          ((and (equal? (car l) #\%) (number? (cadr l)) (number? (caddr l)))
+              (calculate (cons (mod (cadr l) (caddr l)) (calculate (cdddr l)))))
+          (else (cond ((numberps l) l)
+                      (else (calculate (cons (car l) (calculate (cdr l)))))
+                )
+          )
+    )
+)
+
+
+(define (calc args)
+    (car (calculate (lst2expr (string->list (car args)) (zip (abc) (cdr args)))))
+)
+
+(define (nth l n)
+    (cond ((eq? n 1) (car l))
+          (else (nth (cdr l) (- n 1)))
+    )
+)
+
+(print (calc (cdddr (argv))))

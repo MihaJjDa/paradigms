@@ -1,0 +1,16 @@
+#!/usr/local/bin/hopeless -f
+
+dec Len : list(char)#num -> num;
+--- Len(nil, n) <= n;
+--- Len(x::xs, n) <= Len(xs, n+1);
+
+Lens : list(list(char)) -> list(num);
+--- Lens(nil) <= nil;
+--- Lens(x::xs) <= Len(x, 0)::Lens(xs);
+
+dec LensEcho : list(list(char))#list(num)#num -> list(char);
+--- LensEcho(nil, _, _) <= "\n"; 
+--- LensEcho(x::xs, n::ns, y) <= if n = y then x <> " " <> LensEcho(xs, ns, y+1) 
+                                          else LensEcho(xs, ns, y+1);
+
+write(LensEcho(argv, Lens(argv), 1));

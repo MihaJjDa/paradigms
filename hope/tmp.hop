@@ -1,0 +1,4 @@
+Lens : list(list(char)) -> list(num);
+--- Lens(nil) <= nil;
+--- Lens(x::xs) <= Len(x)::Lens(xs);
+

@@ -1,0 +1,6 @@
+#!/usr/local/bin/hopeless -f
+dec Echo : list(list(char)) -> list(char);
+--- Echo(nil) <= "\n"; 
+--- Echo(x::tail) <= x<>" "<>Echo(tail);
+
+write(Echo(argv))

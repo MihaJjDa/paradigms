@@ -1,0 +1,11 @@
+#!/usr/local/bin/hopeless -f
+
+dec Len : list(char)#num -> num;
+--- Len(nil, n) <= n;
+--- Len(x::xs, n) <= Len(xs, n+1);
+
+dec Lens : list(char)#num -> list(char);
+--- Lens(nil, _) <= "\n";
+--- Lens(x::xs, n) <= num2str(Len(x, 0)) <> " " <> Lens(xs);
+
+write(Lens(read("")) <> "\n");

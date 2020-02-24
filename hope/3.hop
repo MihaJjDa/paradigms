@@ -1,0 +1,19 @@
+#!/usr/local/bin/hopeless -f
+dec Nth : list(alpha)#num -> alpha;
+--- Nth(x::tail, n) <= if n = 0 then x else Nth(tail, n - 1);
+
+dec Join : list(alpha)#list(alpha) -> list(alpha);
+--- Join(nil, L) <= L;
+--- Join(x::y, L) <= x::Join(y, L);
+
+dec Parse : list(num)#list(num) -> list(num);
+--- Parse(nil, res) <= 1::res;
+--- Parse(x::tail, res) <= if tail = nil then Parse(tail, Join(res, [1]))
+							else Parse(tail, (x + Nth(tail, 0))::res);
+
+dec Pascal : list(num) -> list(list(num));
+--- Pascal(x) <= x::Pascal(Parse(x, []));
+
+write([Nth(Nth(Pascal([1]), str2num(Nth(argv, 1))), str2num(Nth(argv, 0)))]); 
+
+ 
